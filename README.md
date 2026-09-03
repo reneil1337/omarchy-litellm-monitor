@@ -1,15 +1,16 @@
 # LiteLLM Monitor — Omarchy shell plugin
 
-LiteLLM router usage in your Omarchy bar, the same way you'd watch a
-subscription: tokens per day, per week (calendar weeks), per month, per
-quarter, and per year — one compact dashboard with a per-model breakdown and
-request counts.
+One dashboard in your Omarchy bar for everything AI: the subscription agents
+you've used locally (Claude, Codex, Fireworks — rate limits, pace, balance)
+plus LiteLLM router tokens by day, week (calendar weeks), month, quarter, and
+year, with a per-model breakdown and request counts.
 
 Two pieces, both included:
 
 - a headless **service** that polls your LiteLLM proxy and records usage
-- a **bar widget + panel** with a Week / Month / Quarter / Year selector:
-  the chart and the model table both re-slice on the selection
+- a **bar widget + panel** showing a tab per agent (each with the full
+  dashboard) — the LiteLLM tab carries the Week / Month / Quarter / Year
+  selector, and the chart and model table re-slice on the selection
 
 Install once and it appears next to the stock agents panel; hide either one
 from the bar.

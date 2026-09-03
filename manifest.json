@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "id": "io.github.reneil1337.litellm",
   "name": "LiteLLM Monitor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "reneil1337",
   "license": "MIT",
-  "description": "LiteLLM router usage in the Omarchy bar: tokens by day, week, month, quarter, and year with a per-model breakdown.",
+  "description": "AI usage dashboard for the Omarchy bar: subscription rate limits and pace (Claude, Codex, Fireworks) plus LiteLLM router tokens by day, week, month, quarter, and year with a per-model breakdown.",
   "kinds": ["service", "bar-widget"],
   "entryPoints": {
     "service": "Service.qml",
@@ -13,9 +13,9 @@
   },
   "barWidget": {
     "displayName": "LiteLLM Monitor",
-    "description": "Router usage dashboard: window toggle (week/month/quarter/year), tokens-per-day chart, tokens-by-model table, and request counts.",
+    "description": "One bar icon and one panel: rate-limit meters with pace for every subscription agent, plus a dedicated LiteLLM router view — window toggle (week/month/quarter/year), tokens-per-day chart, tokens-by-model table, and request counts.",
     "category": "AI",
-    "aliases": ["litellm", "router", "tokens"],
+    "aliases": ["litellm", "router", "tokens", "agents", "model-usage"],
     "allowMultiple": false,
     "defaultSection": "right"
   }

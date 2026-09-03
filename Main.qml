@@ -187,16 +187,11 @@ Item {
     var syncRev = syncRevision
     var result = []
     var localIds = {}
-    var focusProvider = "litellm"
     for (var i = 0; i < agents.length; i++) {
       var record = agents[i] ? agents[i].record : null
       if (!record || !record.id) continue
       var id = String(record.id)
       localIds[id] = true
-      // This widget is a dedicated router monitor: other agents keep
-      // writing into the shared usage directory for the stock agents
-      // panel, they just do not get a tab here.
-      if (id !== focusProvider) continue
       if (!providerEnabled(id)) continue
       var display = displayProvider(record)
       if (providerHasData(display)) result.push(display)

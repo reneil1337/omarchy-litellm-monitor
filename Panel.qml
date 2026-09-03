@@ -671,7 +671,7 @@ Panel {
             visible: root.providers.length === 0
             width: parent.width
             topPadding: Style.space(24)
-            text: "No LiteLLM usage yet.\nConfigure the plugin's config.json and give the router some traffic."
+            text: "No AI coding usage found.\nRun an agent locally or configure the\nLiteLLM router in the plugin's config.json."
             color: root.dim
             font.family: root.fontFamily
             font.pixelSize: Style.font.body
