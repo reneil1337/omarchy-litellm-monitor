@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.reneil1337.litellm",
   "name": "LiteLLM Monitor",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "reneil1337",
   "license": "MIT",
   "description": "Feeds LiteLLM proxy usage data into the omarchy agents panel: tokens by day, week, month, quarter, and year with a per-model breakdown, as its own provider tab.",
