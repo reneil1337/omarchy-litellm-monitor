@@ -218,12 +218,12 @@ def build_record(base, key, now):
         "ready": True,
         "scope": "account",
         "hasPromptStats": True,
-        "tierLabel": "Router",
-        "usageStatusText": (
-            "Last Quarter: " + compact_tokens(month_tokens) + " tokens · "
+        "tierLabel": (
+            "Router · Last Quarter: " + compact_tokens(month_tokens) + " tokens · "
             + compact_tokens(month_requests) + " req"
-            if month_tokens > 0 else ""
+            if month_tokens > 0 else "Router"
         ),
+        "usageStatusText": "",
         "authHelpText": "",
         "todayPrompts": int(today_info["requests"]),
         "todaySessions": 0,
