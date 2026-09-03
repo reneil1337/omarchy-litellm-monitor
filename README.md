@@ -16,8 +16,8 @@ from the bar.
 
 <table align="center">
   <tr>
-    <td><img src="./week.png" alt="Week view" width="480"></td>
-    <td><img src="./quarter.png" alt="Quarter view" width="480"></td>
+    <td valign="top"><img src="./week.png" alt="Week view" width="480"></td>
+    <td valign="top"><img src="./quarter.png" alt="Quarter view" width="480"></td>
   </tr>
 </table>
 <!-- previews: drop screenshots here -->
