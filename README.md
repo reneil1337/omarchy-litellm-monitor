@@ -1,33 +1,22 @@
 # LiteLLM Monitor — Omarchy shell plugin
 
-One dashboard in your Omarchy bar for everything AI: the subscription agents
-you've used locally (Claude, Codex, Fireworks — rate limits, pace, balance)
-plus LiteLLM router tokens by day, week (calendar weeks), month, quarter, and
-year, with a per-model breakdown and request counts.
+Feeds your LiteLLM proxy usage into the **stock omarchy agents panel**: one
+`litellm` tab among your other agents, with tokens by day, week (calendar
+weeks), month, quarter, and year, a per-model breakdown, and request counts.
 
-Two pieces, both included:
-
-- a headless **service** that polls your LiteLLM proxy and records usage
-- a **bar widget + panel** showing a tab per agent (each with the full
-  dashboard) — the LiteLLM tab carries the Week / Month / Quarter / Year
-  selector, and the chart and model table re-slice on the selection
-
-Install once and it appears next to the stock agents panel; hide either one
-from the bar.
-
-<table align="center">
-  <tr>
-    <td valign="top"><img src="./week.png" alt="Week view" width="480"></td>
-    <td valign="top"><img src="./quarter.png" alt="Quarter view" width="480"></td>
-  </tr>
-</table>
-<!-- previews: drop screenshots here -->
+No bar icon, no extra panel — the plugin has no UI of its own. It ships a
+headless **service** that polls your LiteLLM proxy every 10 minutes and
+records usage to `~/.local/state/omarchy/agents/usage/litellm.json`, the same
+record directory the agents panel already reads.
 
 ## Install
 
 ```sh
 omarchy plugin add https://github.com/reneil1337/omarchy-litellm-monitor --enable
 ```
+
+Make sure the first-party `omarchy.agents` plugin is enabled (it provides the
+panel and the bar icon).
 
 ## Configure
 
@@ -71,27 +60,11 @@ chmod 600 ~/.config/omarchy/plugins/io.github.reneil1337.litellm/config.json
 The `LITELLM_API_KEY` environment variable overrides `apiKey` if you'd
 rather not store it on disk.
 
-## Kinds
-
-| kind | what you get |
-|------|--------------|
-| `service` | collector, writes the usage record every 10 minutes |
-| `bar-widget` | bar icon + dashboard panel with the window selector |
-
 ## Usage
 
-Click the bar icon to open the dashboard; press Escape to close. Cycle the
-window with the selector:
-
-- **Week** — one bar per day (today highlighted)
-- **Month** — one bar per calendar week
-- **Quarter** — one bar per month
-- **Year** — one bar per month, twelve months back
-
-Tooltips carry exact ranges, token totals and request counts. The header
-line under the selector totals the window (tokens and requests).
-
-Force a refresh sooner than the 10-minute interval with:
+Once the collector has produced a record, the agents panel gets a `litellm`
+tab showing tokens and requests for your router. Force a refresh sooner
+than the 10-minute interval with:
 
 ```sh
 omarchy-shell io.github.reneil1337.litellm refresh
@@ -99,7 +72,8 @@ omarchy-shell io.github.reneil1337.litellm refresh
 
 ## Requirements
 
-- Omarchy Quattro shell (recent `omarchy` with plugin support)
+- Omarchy Quattro shell (recent `omarchy` with plugin support), with the
+  first-party `omarchy.agents` plugin enabled
 - `python3` (stdlib only — the collector has no pip dependencies)
 - A reachable LiteLLM proxy (tested against LiteLLM API 1.101.0) with
   `/user/daily/activity` available to the key
@@ -112,10 +86,12 @@ proxy, `$` spend stays zero, but the token views are unaffected.
 
 The collector writes `litellm.json` to
 `~/.local/state/omarchy/agents/usage/` — the shared record directory the
-Omarchy agents panel reads. This plugin ships its own bar widget (a
-dedicated router view of that data) that renders the record's long-range
-history: `history` (per-day tokens + requests) and `modelDaily` (per-model
-per-day tokens). Other tools can keep feeding that same directory.
+Omarchy agents panel reads. The record carries `history` (per-day tokens +
+requests) and `modelDaily` (per-model per-day tokens), and the panel renders
+it natively like any other agent: the tab, the daily chart, the per-model
+table. As long-range history accumulates, the panel's full window selector
+(week/month/quarter/year) becomes available on the litellm tab exactly as it
+is for the built-in agents. Other tools can keep feeding that same directory.
 
 ## Remove
 
