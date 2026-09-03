@@ -9,6 +9,11 @@ headless **service** that polls your LiteLLM proxy every 10 minutes and
 records usage to `~/.local/state/omarchy/agents/usage/litellm.json`, the same
 record directory the agents panel already reads.
 
+<p align="center">
+  <img src="./screenshot.png" alt="LiteLLM record rendered by the stock agents panel" width="55%">
+</p>
+<!-- screenshot: drop an updated capture here -->
+
 ## Install
 
 ```sh
