@@ -19,8 +19,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-DAYS = 7            # legacy recentDays window (stock panel compatibility)
-HISTORY_DAYS = 365  # full per-day history served to the panel (week/month/quarter/year)
+DAYS = 7            # legacy recentDays window, drives "TOKENS BY DAY"
+MONTHS = 4          # status-line roll-up (total tokens + requests)
+HISTORY_DAYS = 365  # full per-day history kept in the record (schema "weekday")
 PAGE_SIZE = 400
 MAX_PAGES = 32
 STATE_SUBDIR = "omarchy/agents/usage"
@@ -102,7 +103,7 @@ def fetch_activity(base, key, now):
 
     days = {}          # date -> {tokens, requests}
     model_daily = {}   # model -> {date: tokens}
-    model_usage = {}   # model -> {inputTokens, outputTokens, cacheRead..., cacheWrite...}
+    model_parts = {}   # model -> date -> {input, output, cacheRead, cacheWrite}
 
     for page in range(1, MAX_PAGES + 1):
         data = api_get(base, key, "/user/daily/activity", dict(params, page=page, page_size=PAGE_SIZE))
@@ -121,14 +122,14 @@ def fetch_activity(base, key, now):
                 if mtotal == 0:
                     continue
                 model_daily.setdefault(model, {})[day] = mtotal
-                bucket = model_usage.setdefault(model, {
+                parts = model_parts.setdefault(model, {}).setdefault(day, {
                     "inputTokens": 0, "outputTokens": 0,
                     "cacheReadInputTokens": 0, "cacheCreationInputTokens": 0,
                 })
-                bucket["inputTokens"] += int_or_zero(mmetrics.get("prompt_tokens"))
-                bucket["outputTokens"] += int_or_zero(mmetrics.get("completion_tokens"))
-                bucket["cacheReadInputTokens"] += int_or_zero(mmetrics.get("cache_read_input_tokens"))
-                bucket["cacheCreationInputTokens"] += int_or_zero(mmetrics.get("cache_creation_input_tokens"))
+                parts["inputTokens"] += int_or_zero(mmetrics.get("prompt_tokens"))
+                parts["outputTokens"] += int_or_zero(mmetrics.get("completion_tokens"))
+                parts["cacheReadInputTokens"] += int_or_zero(mmetrics.get("cache_read_input_tokens"))
+                parts["cacheCreationInputTokens"] += int_or_zero(mmetrics.get("cache_creation_input_tokens"))
         meta = data.get("metadata") or {}
         if meta.get("has_more") is not True:
             break
@@ -136,7 +137,7 @@ def fetch_activity(base, key, now):
             print("warning: hit page cap; history is partial", file=sys.stderr)
 
     fellows = date_strings(HISTORY_DAYS, now)
-    return fellows, days, model_daily, model_usage
+    return fellows, days, model_daily, model_parts
 
 
 def int_or_zero(value):
@@ -146,9 +147,36 @@ def int_or_zero(value):
         return 0
 
 
+def model_usage_window(model_parts, window):
+    """Per-model component sums over a window of dates. The stock agents
+    panel totals a model row as input + output + cache reads/writes and
+    scales the table to the heaviest row."""
+    usage = {}
+    for model, per_day in model_parts.items():
+        bucket = {"inputTokens": 0, "outputTokens": 0,
+                  "cacheReadInputTokens": 0, "cacheCreationInputTokens": 0}
+        for day in window:
+            parts = per_day.get(day)
+            if parts:
+                for field in bucket:
+                    bucket[field] += int(parts.get(field, 0))
+        if sum(bucket.values()) > 0:
+            usage[model] = bucket
+    return usage
+
+
+def compact_tokens(count):
+    value = float(count)
+    for unit, divisor in (("B", 1e9), ("M", 1e6), ("k", 1e3)):
+        if value >= divisor:
+            trimmed = round(value / divisor, 0 if value >= 10 * divisor else 1)
+            return ("%g" % trimmed) + unit
+    return "%d" % count
+
+
 def build_record(base, key, now):
     fellows = fetch_activity(base, key, now)
-    days_expected, days, model_daily, model_usage = fellows
+    days_expected, days, model_daily, model_parts = fellows
     today = days_expected[-1]
 
     # Explicit zero-fill keeps the timeline contiguous for any window slice.
@@ -169,6 +197,21 @@ def build_record(base, key, now):
 
     recent_days = [{"date": day["date"], "messageCount": day["tokens"]} for day in history[-DAYS:]]
 
+    # The model table must match the chart above it: same 7 days, same scale.
+    model_usage_7d = model_usage_window(model_parts, days_expected[-DAYS:])
+
+    # The panel can't render multi-month charts natively, so roll the last
+    # four calendar months up into the status line instead.
+    month_totals = {}
+    for day in history:
+        month = day["date"][:7]
+        totals = month_totals.setdefault(month, {"tokens": 0, "requests": 0})
+        totals["tokens"] += day["tokens"]
+        totals["requests"] += day["requests"]
+    months = sorted(month_totals)[-MONTHS:]
+    month_tokens = sum(month_totals[m]["tokens"] for m in months)
+    month_requests = sum(month_totals[m]["requests"] for m in months)
+
     record = {
         "id": RECORD_ID,
         "name": "LiteLLM",
@@ -176,7 +219,11 @@ def build_record(base, key, now):
         "scope": "account",
         "hasPromptStats": True,
         "tierLabel": "Router",
-        "usageStatusText": "",
+        "usageStatusText": (
+            "4-month total: " + compact_tokens(month_tokens) + " tokens · "
+            + compact_tokens(month_requests) + " requests"
+            if month_tokens > 0 else ""
+        ),
         "authHelpText": "",
         "todayPrompts": int(today_info["requests"]),
         "todaySessions": 0,
@@ -186,7 +233,7 @@ def build_record(base, key, now):
         "totalPrompts": requests_total,
         "totalSessions": 0,
         "activeDays": sum(1 for day in history if day["tokens"] > 0),
-        "modelUsage": model_usage,
+        "modelUsage": model_usage_7d,
         "history": history,
         "modelDaily": model_daily_compact,
         "limits": [],
