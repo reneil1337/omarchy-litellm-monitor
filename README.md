@@ -102,6 +102,15 @@ table. Other tools can keep feeding that same directory.
 omarchy plugin remove io.github.reneil1337.litellm
 ```
 
+## Icon
+
+The agents panel looks up provider marks by convention — first-party only:
+`/usr/share/omarchy/shell/plugins/agents/assets/<id>.svg`. For the `litellm`
+record the stock assets have no entry yet, so the panel falls back to a text
+glyph and logs a warning. `assets/litellm.svg` here is the proposed brand
+mark (readable on light and dark surfaces, single file like Claude's); if
+upstream accepts it the warning disappears for everyone.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
