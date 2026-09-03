@@ -1,0 +1,4 @@
+{
+  "baseUrl": "http://your-litellm-host:4000",
+  "apiKey": "sk-..."
+}
