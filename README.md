@@ -89,9 +89,7 @@ The collector writes `litellm.json` to
 Omarchy agents panel reads. The record carries `history` (per-day tokens +
 requests) and `modelDaily` (per-model per-day tokens), and the panel renders
 it natively like any other agent: the tab, the daily chart, the per-model
-table. As long-range history accumulates, the panel's full window selector
-(week/month/quarter/year) becomes available on the litellm tab exactly as it
-is for the built-in agents. Other tools can keep feeding that same directory.
+table. Other tools can keep feeding that same directory.
 
 ## Remove
 
