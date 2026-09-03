@@ -96,6 +96,16 @@ requests) and `modelDaily` (per-model per-day tokens), and the panel renders
 it natively like any other agent: the tab, the daily chart, the per-model
 table. Other tools can keep feeding that same directory.
 
+The plugin is strictly data-only: it writes exactly one file,
+`litellm.json`, and reads nothing but its own `config.json` next to the
+script — it never touches user configuration or other agents' records.
+
+## Keep up to date
+
+```sh
+omarchy plugin update io.github.reneil1337.litellm
+```
+
 ## Remove
 
 ```sh
