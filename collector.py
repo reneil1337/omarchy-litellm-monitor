@@ -219,7 +219,7 @@ def build_record(base, key, now):
         "scope": "account",
         "hasPromptStats": True,
         "tierLabel": (
-            "Router · Last Quarter: " + compact_tokens(month_tokens) + " tokens · "
+            "Last Quarter: " + compact_tokens(month_tokens) + " tokens · "
             + compact_tokens(month_requests) + " req"
             if month_tokens > 0 else "Router"
         ),
