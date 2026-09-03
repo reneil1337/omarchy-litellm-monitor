@@ -220,7 +220,7 @@ def build_record(base, key, now):
         "hasPromptStats": True,
         "tierLabel": "Router",
         "usageStatusText": (
-            "4-month total: " + compact_tokens(month_tokens) + " tokens · "
+            "Last Quarter Usage: " + compact_tokens(month_tokens) + " tokens · "
             + compact_tokens(month_requests) + " requests"
             if month_tokens > 0 else ""
         ),
