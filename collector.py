@@ -220,8 +220,8 @@ def build_record(base, key, now):
         "hasPromptStats": True,
         "tierLabel": "Router",
         "usageStatusText": (
-            "Last Quarter Usage: " + compact_tokens(month_tokens) + " tokens · "
-            + compact_tokens(month_requests) + " requests"
+            "Last Quarter: " + compact_tokens(month_tokens) + " tkn · "
+            + compact_tokens(month_requests) + " req"
             if month_tokens > 0 else ""
         ),
         "authHelpText": "",
