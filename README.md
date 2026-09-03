@@ -14,8 +14,11 @@ Two pieces, both included:
 Install once and it appears next to the stock agents panel; hide either one
 from the bar.
 
-![preview](./preview.png)
-<!-- optional: drop a preview.png here -->
+<p align="center">
+  <img src="./week.png" alt="Week view" width="49%">
+  <img src="./quarter.png" alt="Quarter view" width="49%">
+</p>
+<!-- previews: drop screenshots here -->
 
 ## Install
 
