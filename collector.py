@@ -20,7 +20,6 @@ import urllib.parse
 import urllib.request
 
 DAYS = 7            # legacy recentDays window, drives "TOKENS BY DAY"
-MONTHS = 4          # status-line roll-up (total tokens + requests)
 HISTORY_DAYS = 365  # full per-day history kept in the record (schema "weekday")
 PAGE_SIZE = 400
 MAX_PAGES = 32
@@ -200,17 +199,11 @@ def build_record(base, key, now):
     # The model table must match the chart above it: same 7 days, same scale.
     model_usage_7d = model_usage_window(model_parts, days_expected[-DAYS:])
 
-    # The panel can't render multi-month charts natively, so roll the last
-    # four calendar months up into the status line instead.
-    month_totals = {}
-    for day in history:
-        month = day["date"][:7]
-        totals = month_totals.setdefault(month, {"tokens": 0, "requests": 0})
-        totals["tokens"] += day["tokens"]
-        totals["requests"] += day["requests"]
-    months = sorted(month_totals)[-MONTHS:]
-    month_tokens = sum(month_totals[m]["tokens"] for m in months)
-    month_requests = sum(month_totals[m]["requests"] for m in months)
+    # The panel's subheading mirrors the chart above it: same 7-day window,
+    # like venice's "7d:" heading.
+    recent = history[-DAYS:]
+    recent_tokens = sum(day["tokens"] for day in recent)
+    recent_requests = sum(day["requests"] for day in recent)
 
     record = {
         "id": RECORD_ID,
@@ -219,9 +212,9 @@ def build_record(base, key, now):
         "scope": "account",
         "hasPromptStats": True,
         "tierLabel": (
-            "Last Quarter: " + compact_tokens(month_tokens) + " tokens · "
-            + compact_tokens(month_requests) + " req"
-            if month_tokens > 0 else "Router"
+            "7d: " + compact_tokens(recent_tokens) + " tokens · "
+            + compact_tokens(recent_requests) + " requests"
+            if recent_tokens > 0 else "Router"
         ),
         "usageStatusText": "",
         "authHelpText": "",
