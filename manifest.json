@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.reneil1337.litellm",
+  "name": "LiteLLM Monitor",
+  "version": "3.0.1",
+  "author": "reneil1337",
+  "license": "MIT",
+  "description": "LiteLLM proxy usage — tokens by day for up to a year, per-model usage, and request counts — with the AI Usage bar panel (a tab per monitor: day, week, month, quarter, and year charts). Also feeds the Omarchy agents panel.",
+  "kinds": ["service", "bar-widget"],
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "UsagePanel.qml"
+  },
+  "barWidget": {
+    "displayName": "AI Usage (LiteLLM Monitor)",
+    "description": "One panel with a tab per usage monitor (Venice, LiteLLM): totals with trends, tokens over time, tokens by model, and balances. Add only one AI Usage widget; either shows every tab.",
+    "category": "AI",
+    "aliases": ["usage", "ai-usage", "venice", "litellm"],
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
